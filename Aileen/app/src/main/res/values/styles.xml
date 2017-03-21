@@ -1,0 +1,17 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--ToolBarの色-->
+        <item name="android:toolbarStyle">@color/dark_pink</item>
+        <item name="android:colorPrimary">@color/dark_pink</item>
+        <item name="android:colorPrimaryDark">@color/pink</item>
+        <!--ToolBarのタイトルText-->
+        <item name="android:textColorPrimary">@color/black</item>
+        <!--ToolBarのオプションメニューのOverflowアイコンの色-->
+        <item name="android:windowBackground">@color/white</item>
+        <item name="colorAccent">@color/light_orange</item>
+        <item name="android:navigationBarColor">@color/black</item>
+    </style>
+
+</resources>

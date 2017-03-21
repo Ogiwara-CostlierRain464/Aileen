@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+    <item
+        android:id="@+id/channels"
+        android:icon="@mipmap/label"
+        android:title="@string/label_list"/>
+    <!--item
+        android:id="@+id/history"
+        android:icon="@mipmap/history"
+        android:title="@string/navigation_history" /-->
+    <item
+        android:id="@+id/favorite"
+        android:icon="@mipmap/favorite"
+        android:title="@string/favorite" />
+
+    <item
+        android:id="@+id/thumb_up"
+        android:icon="@mipmap/thumb_up"
+        android:title="@string/thumb_up" />
+
+    <item
+        android:id="@+id/downloads"
+        android:icon="@mipmap/download"
+        android:title="@string/download"
+        />
+    </group>
+</menu>

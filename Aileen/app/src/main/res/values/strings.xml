@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Aileen</string>
+
+    <!-- Navigation -->
+    <string name="label_list">ラベルリスト</string>
+    <string name="history">履歴</string>
+    <string name="favorite">お気に入り</string>
+    <string name="thumb_up">高く評価した動画</string>
+    <string name="playlist">プレイリスト</string>
+    <string name="download">ダウンロードリスト</string>
+    <string name="about">このアプリについて</string>
+    <string name="settings">設定</string>
+
+    <!-- Permission Dialog-->
+    <string name="permission_dialog_title">権限の確認が必要です</string>
+    <string name="permission_dialog_message">このアプリケーションを使用するには、連絡先へのアクセスが必要になります</string>
+
+    <!-- Permission Denied Dialog-->
+    <string name="permission_denied_title">連絡先へのアクセスが拒否されました</string>
+    <string name="permission_denied_message">アプリケーションを終了します</string>
+
+    <!-- Account not choosed  -->
+    <string name="account_not_choose_title">アカウントが選択されていません</string>
+    <string name="account_not_choose_message">YouTubeアカウントにアクセスする為、選択してください</string>
+
+    <!-- Google plus failed -->
+    <string name="google_plus_failed_title">Google+への接続に失敗しました</string>
+
+    <!-- OAuth failer Dialog -->
+    <string name="oauth_failed_title">認証に失敗</string>
+
+    <!-- -->
+    <string name="layout_no_item_message">ここには何もないようです</string>
+
+    <!-- more menu -->
+    <string name="more_download">ダウンロード</string>
+    <string name="more_share">シェア</string>
+</resources>

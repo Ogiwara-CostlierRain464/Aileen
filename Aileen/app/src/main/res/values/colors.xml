@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffff</color>
+    <color name="gray">#fafafa</color>
+    <color name="black">#000000</color>
+    <color name="light_green">#69f0ae</color>
+    <color name="light_orange">#ff8902</color>
+    <color name="orange">#ff6336</color>
+    <color name="pink">#e91e63</color>
+    <color name="dark_pink">#c2185b</color>
+
+    <!-- For rolling View -->
+    <color name="red">#f63c03</color>
+    <color name="green">#43a047</color>
+    <color name="blue">#2ab7f1</color>
+    <color name="yellow">#ffc107</color>
+</resources>
