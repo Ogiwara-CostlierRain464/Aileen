@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import jp.ogiwara.java.aileen.MainActivity;
 import jp.ogiwara.java.aileen.R;
 import jp.ogiwara.java.aileen.model.YouTubeVideo;
-import jp.ogiwara.java.aileen.task.LoadPlayListTask;
+import jp.ogiwara.java.aileen.task.LoadPlayListVideosTask;
 
 /**
  * 1: View読み込み
@@ -31,26 +31,16 @@ public class PlayListFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
 
     public MainActivity mainActivity;
-    public GoogleAccountCredential credential;
+
     public String playListId;
-    public ArrayList<YouTubeVideo> videos = new ArrayList<>();
 
-    public PlayListFragment(){
-
-    }
 
     @CheckResult
-    public static PlayListFragment create(MainActivity a,GoogleAccountCredential c,String id){
+    public static PlayListFragment create(MainActivity activity,String playListId){
         PlayListFragment p = new PlayListFragment();
-        p.mainActivity = a;
-        p.credential = c;
-        p.playListId = id;
+        p.mainActivity = activity;
+        p.playListId = playListId;
         return p;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstance){
-        super.onCreate(savedInstance);
     }
 
     @Override
@@ -70,6 +60,6 @@ public class PlayListFragment extends Fragment {
     }
 
     private void loadVideos(){
-        new LoadPlayListTask(mainActivity.checkedLists,this,playListId,credential).execute();
+        new LoadPlayListVideosTask(mainActivity).execute(playListId);
     }
 }

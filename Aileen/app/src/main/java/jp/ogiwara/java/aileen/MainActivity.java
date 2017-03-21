@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_AUTHORIZATION = 3;
     private static final String TAG = MainActivity.class.getName();
 
-    Toolbar toolbar;
+    public Toolbar toolbar;
     public DrawerLayout drawerLayout;
     public NavigationView navigationView;
     NetworkImageView accountImageView;
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     String accountName;
 
-    GoogleAccountCredential credential;
+    public GoogleAccountCredential credential;
     GoogleApiClient googleApiClient;
 
     public ArrayMap<String,String> playLists = new ArrayMap<>();
@@ -100,9 +100,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.toolbar_about:
+
                 return true;
             case R.id.toolbar_settings:
-
+                Intent intent = new Intent(getApplicationContext(),SettingsActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -132,6 +134,29 @@ public class MainActivity extends AppCompatActivity {
                 accountImageView = (NetworkImageView) navigationView.findViewById(R.id.drawer_header_account_image);
                 accountNameTextView = (TextView) navigationView.findViewById(R.id.drawer_header_account_name);
                 accountImageCover = (NetworkImageView) navigationView.findViewById(R.id.drawer_header_account_cover);
+            }
+        });
+
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                if(item.getTitle().toString() == getResources().getString(R.string.label_list)){
+                    transaction.replace(R.id.BaseLayout, LabelListFragment.create(MainActivity.this)).commit();
+                }else if(item.getTitle().toString() == getResources().getString(R.string.favorite)) {
+                    transaction.replace(R.id.BaseLayout, PlayListFragment.create(MainActivity.this, playLists.get("Favorites"))).commit();
+                }else if(item.getTitle().toString() == getResources().getString(R.string.thumb_up)) {
+                    transaction.replace(R.id.BaseLayout, PlayListFragment.create(MainActivity.this, playLists.get("Likes"))).commit();
+                }else if(item.getTitle().toString() == getResources().getString(R.string.download)){
+                    //TODO Downloads
+                }else{
+                    transaction.replace(R.id.BaseLayout,PlayListFragment.create(MainActivity.this,playLists.get(item.getTitle().toString()))).commit();
+                }
+                toolbar.setTitle(item.getTitle());
+                drawerLayout.closeDrawer(Gravity.START);
+                return true;
             }
         });
 
@@ -325,8 +350,8 @@ public class MainActivity extends AppCompatActivity {
 
     //Playlistの読み込みが終わってから
     public void loadFirstFragment(){
-        //TEST!
+        toolbar.setTitle(R.string.label_list);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.BaseLayout, LabelListFragment.create(this,credential)).commit();
+        transaction.replace(R.id.BaseLayout, LabelListFragment.create(this)).commit();
     }
 }

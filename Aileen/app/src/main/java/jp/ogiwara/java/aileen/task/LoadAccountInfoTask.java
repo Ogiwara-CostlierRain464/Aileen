@@ -39,7 +39,7 @@ import jp.ogiwara.java.aileen.utils.Constants;
 
 public class LoadAccountInfoTask extends AsyncTask<Void,Void,Void>{
 
-    final String TAG = LoadPlayListTask.class.getName();
+    final String TAG = LoadAccountInfoTask.class.getName();
 
     final HttpTransport transport = AndroidHttp.newCompatibleTransport();
     final JsonFactory jsonFactory = new JacksonFactory();
@@ -100,24 +100,6 @@ public class LoadAccountInfoTask extends AsyncTask<Void,Void,Void>{
 
     @Override
     protected void onPostExecute(Void v){
-
-        activity.navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if(item.getTitle().toString() == activity.getResources().getString(R.string.label_list)){
-                    FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.BaseLayout, LabelListFragment.create(activity,credential)).commit();
-                }else if(item.getTitle().toString() == activity.getResources().getString(R.string.favorite)){
-                    FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.BaseLayout, PlayListFragment.create(activity,credential,activity.playLists.get("Favorites"))).commit();
-                }else{
-                    FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.BaseLayout,PlayListFragment.create(activity,credential,activity.playLists.get(item.getTitle().toString()))).commit();
-                }
-                activity.drawerLayout.closeDrawer(Gravity.START);
-                return true;
-            }
-        });
 
         Menu menu = activity.navigationView.getMenu().addSubMenu(Menu.NONE,1,Menu.NONE,R.string.playlist);
         for(String name : activity.playLists.keySet()){

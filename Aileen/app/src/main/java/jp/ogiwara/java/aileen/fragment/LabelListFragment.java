@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import jp.ogiwara.java.aileen.MainActivity;
 import jp.ogiwara.java.aileen.R;
 import jp.ogiwara.java.aileen.model.YouTubeVideo;
-import jp.ogiwara.java.aileen.task.LoadLabelListTask;
+import jp.ogiwara.java.aileen.task.LoadVideosTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,18 +23,15 @@ import jp.ogiwara.java.aileen.task.LoadLabelListTask;
 public class LabelListFragment extends Fragment {
 
     public MainActivity mainActivity;
-    public GoogleAccountCredential credential;
-    public ArrayList<YouTubeVideo> videos = new ArrayList<>();
 
     public LabelListFragment() {
         // Required empty public constructor
     }
 
     @CheckResult
-    public static LabelListFragment create(MainActivity a, GoogleAccountCredential c){
+    public static LabelListFragment create(MainActivity activity){
         LabelListFragment l = new LabelListFragment();
-        l.mainActivity = a;
-        l.credential = c;
+        l.mainActivity = activity;
         return l;
     }
 
@@ -47,7 +44,6 @@ public class LabelListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_label_list, container, false);
     }
 
@@ -56,6 +52,6 @@ public class LabelListFragment extends Fragment {
     }
 
     private void loadLabelVideos(){
-        new LoadLabelListTask(mainActivity.checkedLists,this,credential).execute();
+        new LoadVideosTask(mainActivity).execute(mainActivity.checkedLists);
     }
 }
