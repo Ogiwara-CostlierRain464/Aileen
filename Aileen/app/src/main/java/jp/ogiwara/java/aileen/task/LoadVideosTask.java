@@ -1,6 +1,7 @@
 package jp.ogiwara.java.aileen.task;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -30,6 +31,7 @@ import java.util.List;
 import jp.ogiwara.java.aileen.MainActivity;
 import jp.ogiwara.java.aileen.R;
 import jp.ogiwara.java.aileen.model.YouTubeVideo;
+import jp.ogiwara.java.aileen.service.BackgroundAudioService;
 import jp.ogiwara.java.aileen.utils.Constants;
 import jp.ogiwara.java.aileen.utils.ISO8601DurationConverter;
 import jp.ogiwara.java.aileen.utils.NetworkSingleton;
@@ -120,7 +122,7 @@ public class LoadVideosTask extends AsyncTask<ArrayList<String>,Void,Void> {
         cardLiner.removeAllViews();
 
         for(final YouTubeVideo youTubeVideo : videos){
-            LayoutInflater inflater = (LayoutInflater) mainActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            final LayoutInflater inflater = (LayoutInflater) mainActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.video_item,null);
             final CardView cardView = (CardView) linearLayout.findViewById(R.id.video_item);
 
@@ -140,19 +142,19 @@ public class LoadVideosTask extends AsyncTask<ArrayList<String>,Void,Void> {
 
             final CheckBox label = (CheckBox) linearLayout.findViewById(R.id.labelButton);
 
-            if(mainActivity.checkedLists.contains(youTubeVideo.id)){
+            if(mainActivity.labeledVideos.contains(youTubeVideo.id)){
                 label.setBackground(mainActivity.getResources().getDrawable(R.drawable.label));
             }
 
             label.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mainActivity.checkedLists.contains(youTubeVideo.id)){
+                    if(mainActivity.labeledVideos.contains(youTubeVideo.id)){
                         v.setBackground(mainActivity.getResources().getDrawable(R.mipmap.label_outline));
-                        mainActivity.checkedLists.remove(youTubeVideo.id);
+                        mainActivity.labeledVideos.remove(youTubeVideo.id);
                     }else{
                         v.setBackground(mainActivity.getResources().getDrawable(R.mipmap.label));
-                        mainActivity.checkedLists.add(youTubeVideo.id);
+                        mainActivity.labeledVideos.add(youTubeVideo.id);
                     }
                 }
             });
@@ -177,7 +179,11 @@ public class LoadVideosTask extends AsyncTask<ArrayList<String>,Void,Void> {
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO Start Music
+                    Log.d(TAG,"clicked: "+ youTubeVideo.title);
+                    Intent intent = new Intent(mainActivity.getApplicationContext(), jp.ogiwara.java.aileen.service.BackgroundAudioService.class);
+                    intent.putExtra(Constants.YOUTUBE_TYPE_VIDEO,youTubeVideo);
+                    intent.setAction(BackgroundAudioService.ACTION_PLAY);
+                    mainActivity.startService(intent);
                 }
             });
             cardLiner.addView(linearLayout);

@@ -51,5 +51,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:10.2.0'
     compile 'com.google.android.gms:play-services-plus:10.2.0'
     compile 'com.android.support:support-v4:25.2.0'
+    compile 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
     testCompile 'junit:junit:4.12'
 }

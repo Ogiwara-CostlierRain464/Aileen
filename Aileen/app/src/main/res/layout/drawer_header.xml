@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="169dp">
+    android:layout_height="wrap_content">
 
     <jp.ogiwara.java.aileen.utils.CircleImageView
         android:id="@+id/drawer_header_account_image"
@@ -15,8 +15,8 @@
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/drawer_header_account_cover"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="300dp"
+        android:layout_height="168dp" />
 
     <TextView
         android:id="@+id/drawer_header_account_name"

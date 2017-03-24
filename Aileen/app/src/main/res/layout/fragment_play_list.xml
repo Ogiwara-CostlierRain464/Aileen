@@ -4,10 +4,6 @@
     android:layout_height="match_parent"
     tools:context="jp.ogiwara.java.aileen.fragment.PlayListFragment">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/refresh_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -24,5 +20,4 @@
                 android:id="@+id/cardLinear">
             </LinearLayout>
         </ScrollView>
-    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

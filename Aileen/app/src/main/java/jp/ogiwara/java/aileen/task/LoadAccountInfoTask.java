@@ -1,14 +1,7 @@
 package jp.ogiwara.java.aileen.task;
 
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuItem;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
@@ -16,7 +9,6 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecovera
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.ArrayMap;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.ChannelContentDetails;
 import com.google.api.services.youtube.model.ChannelListResponse;
@@ -29,8 +21,6 @@ import java.util.List;
 
 import jp.ogiwara.java.aileen.MainActivity;
 import jp.ogiwara.java.aileen.R;
-import jp.ogiwara.java.aileen.fragment.LabelListFragment;
-import jp.ogiwara.java.aileen.fragment.PlayListFragment;
 import jp.ogiwara.java.aileen.utils.Constants;
 
 /**
@@ -61,7 +51,7 @@ public class LoadAccountInfoTask extends AsyncTask<Void,Void,Void>{
                     activity.getResources().getResourceName(R.string.app_name)
             ).build();
 
-            getChannelRatedList(youTube);
+            //getChannelRatedList(youTube);
             getOtherList(youTube);
         }catch (UserRecoverableAuthIOException e){
             e.printStackTrace();
@@ -95,7 +85,6 @@ public class LoadAccountInfoTask extends AsyncTask<Void,Void,Void>{
         ChannelListResponse channelListResponse = channelRequest.execute();
         final ChannelContentDetails.RelatedPlaylists relatedPlaylists = channelListResponse.getItems().get(0).getContentDetails().getRelatedPlaylists();
         activity.playLists.add("Likes",relatedPlaylists.getLikes());
-        System.out.println("Watch-Histroy: " + relatedPlaylists.getWatchHistory());
     }
 
     @Override

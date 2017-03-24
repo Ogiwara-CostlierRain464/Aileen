@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="clean_history"
+        android:title="@string/pref_history_clean_history_title"
+        />
+    <Preference
+        android:key="clean_labeled"
+        android:title="@string/pref_history_clean_labeled_title"
+        />
+</PreferenceScreen>

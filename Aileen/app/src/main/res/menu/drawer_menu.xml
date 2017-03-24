@@ -14,10 +14,11 @@
         android:icon="@mipmap/favorite"
         android:title="@string/favorite" />
 
+
     <item
-        android:id="@+id/thumb_up"
-        android:icon="@mipmap/thumb_up"
-        android:title="@string/thumb_up" />
+        android:id="@+id/history"
+        android:icon="@mipmap/history"
+        android:title="@string/history" />
 
     <item
         android:id="@+id/downloads"

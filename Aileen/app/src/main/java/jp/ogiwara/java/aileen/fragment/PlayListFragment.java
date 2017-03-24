@@ -34,6 +34,9 @@ public class PlayListFragment extends Fragment {
 
     public String playListId;
 
+    public PlayListFragment(){
+        setRetainInstance(true);
+    }
 
     @CheckResult
     public static PlayListFragment create(MainActivity activity,String playListId){
@@ -46,17 +49,8 @@ public class PlayListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater i,ViewGroup container,Bundle s){
         super.onCreateView(i,container,s);
-        View row =  i.inflate(R.layout.fragment_play_list,container,false);
-        swipeRefreshLayout = (SwipeRefreshLayout) row.findViewById(R.id.refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //TODO check this later
-            }
-        });
-        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.black));
         loadVideos();
-        return row;
+        return i.inflate(R.layout.fragment_play_list,container,false);
     }
 
     private void loadVideos(){

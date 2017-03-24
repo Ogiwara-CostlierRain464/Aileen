@@ -5,24 +5,20 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.PermissionChecker;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,15 +38,16 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jp.ogiwara.java.aileen.fragment.LabelListFragment;
+import jp.ogiwara.java.aileen.fragment.OfflineListFragment;
 import jp.ogiwara.java.aileen.fragment.PlayListFragment;
 import jp.ogiwara.java.aileen.task.LoadAccountInfoTask;
 import jp.ogiwara.java.aileen.utils.Constants;
 import jp.ogiwara.java.aileen.utils.NetworkSingleton;
 
 
-/**
- * 各関数内で次の処理を呼ぶ
+/** 各関数内で次の処理を呼ぶ
+ *
+ * TODO インスタンスの復帰
  *
  * 1: View読み込み
  * 2: 権限チェック{@link MainActivity#loadPermission()}
@@ -65,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ACCOUNT_PICKER = 2;
     private static final int REQUEST_AUTHORIZATION = 3;
     private static final String TAG = MainActivity.class.getName();
+
+    private static MainActivity instance;
 
     public Toolbar toolbar;
     public DrawerLayout drawerLayout;
@@ -81,13 +80,19 @@ public class MainActivity extends AppCompatActivity {
     GoogleApiClient googleApiClient;
 
     public ArrayMap<String,String> playLists = new ArrayMap<>();
-    public ArrayList<String> checkedLists = new ArrayList<>();
+    public ArrayList<String> labeledVideos = new ArrayList<>(Constants.MAX_LIST_COUNT);
+    public ArrayList<String> historyVideos = new ArrayList<>(Constants.MAX_LIST_COUNT);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        instance = this;
         start();
+    }
+
+    public static MainActivity getInstance(){
+        return instance;
     }
 
     @Override
@@ -104,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.toolbar_settings:
                 Intent intent = new Intent(getApplicationContext(),SettingsActivity.class);
+                intent.putStringArrayListExtra("labeled",labeledVideos);
+                intent.putStringArrayListExtra("history",historyVideos);
                 startActivity(intent);
                 return true;
             default:
@@ -144,11 +151,11 @@ public class MainActivity extends AppCompatActivity {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                 if(item.getTitle().toString() == getResources().getString(R.string.label_list)){
-                    transaction.replace(R.id.BaseLayout, LabelListFragment.create(MainActivity.this)).commit();
+                    transaction.replace(R.id.BaseLayout, OfflineListFragment.create(MainActivity.this,OfflineListFragment.TYPE.label)).commit();
                 }else if(item.getTitle().toString() == getResources().getString(R.string.favorite)) {
                     transaction.replace(R.id.BaseLayout, PlayListFragment.create(MainActivity.this, playLists.get("Favorites"))).commit();
-                }else if(item.getTitle().toString() == getResources().getString(R.string.thumb_up)) {
-                    transaction.replace(R.id.BaseLayout, PlayListFragment.create(MainActivity.this, playLists.get("Likes"))).commit();
+                }else if(item.getTitle().toString() == getResources().getString(R.string.history)) {
+                    transaction.replace(R.id.BaseLayout, OfflineListFragment.create(MainActivity.this,OfflineListFragment.TYPE.history)).commit();
                 }else if(item.getTitle().toString() == getResources().getString(R.string.download)){
                     //TODO Downloads
                 }else{
@@ -233,9 +240,12 @@ public class MainActivity extends AppCompatActivity {
 
         if(setting == null){
             accountName = null;
+            labeledVideos = new ArrayList<>();
+            historyVideos = new ArrayList<>();
         }else{
             accountName = setting.accountName;
-            checkedLists = setting.checkedVideos;
+            labeledVideos = setting.labeled;
+            historyVideos = setting.history;
         }
         loadAccount();
     }
@@ -244,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
     private void saveSettings(){
         SharedPreferences.Editor editor = preferences.edit();
         Gson gson = new Gson();
-        String jsonInstanceString = gson.toJson(new Constants.Setting(accountName,checkedLists));
+        String jsonInstanceString = gson.toJson(new Constants.Setting(accountName,labeledVideos,historyVideos));
         editor.putString(Constants.JSON_STRING_KEY,jsonInstanceString);
         editor.apply();
     }
@@ -350,8 +360,8 @@ public class MainActivity extends AppCompatActivity {
 
     //Playlistの読み込みが終わってから
     public void loadFirstFragment(){
-        toolbar.setTitle(R.string.label_list);
+        toolbar.setTitle(R.string.favorite);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.BaseLayout, LabelListFragment.create(this)).commit();
+        transaction.replace(R.id.BaseLayout, PlayListFragment.create(MainActivity.this, playLists.get("Favorites"))).commit();
     }
 }

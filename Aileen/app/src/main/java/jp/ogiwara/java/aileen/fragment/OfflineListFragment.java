@@ -8,30 +8,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-
-import java.util.ArrayList;
-
 import jp.ogiwara.java.aileen.MainActivity;
 import jp.ogiwara.java.aileen.R;
-import jp.ogiwara.java.aileen.model.YouTubeVideo;
 import jp.ogiwara.java.aileen.task.LoadVideosTask;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LabelListFragment extends Fragment {
+public class OfflineListFragment extends Fragment {
+
+    public enum TYPE{
+        label,
+        history
+    }
+
+    public TYPE type;
 
     public MainActivity mainActivity;
-
-    public LabelListFragment() {
+    public OfflineListFragment() {
         // Required empty public constructor
+        setRetainInstance(true);
     }
 
     @CheckResult
-    public static LabelListFragment create(MainActivity activity){
-        LabelListFragment l = new LabelListFragment();
+    public static OfflineListFragment create(MainActivity activity,TYPE type){
+        OfflineListFragment l = new OfflineListFragment();
         l.mainActivity = activity;
+        l.type = type;
         return l;
     }
 
@@ -48,10 +51,10 @@ public class LabelListFragment extends Fragment {
     }
 
     private void start(){
-        loadLabelVideos();
+        loadVideos();
     }
 
-    private void loadLabelVideos(){
-        new LoadVideosTask(mainActivity).execute(mainActivity.checkedLists);
+    private void loadVideos(){
+        new LoadVideosTask(mainActivity).execute(type == TYPE.label ? mainActivity.labeledVideos : mainActivity.historyVideos);
     }
 }

@@ -2,6 +2,7 @@
 
     <!-- These settings headers are only used on tablets. -->
 
+    <!--
     <header
         android:fragment="jp.ogiwara.java.aileen.SettingsActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
@@ -15,6 +16,17 @@
     <header
         android:fragment="jp.ogiwara.java.aileen.SettingsActivity$DataSyncPreferenceFragment"
         android:icon="@drawable/ic_sync_black_24dp"
-        android:title="@string/pref_header_data_sync" />
+        android:title="@string/pref_header_data_sync" />-->
+
+    <header
+        android:icon="@mipmap/data_usage"
+        android:fragment="jp.ogiwara.java.aileen.SettingsActivity$DataFragment"
+        android:title="@string/pref_data_title" />
+
+    <header
+        android:icon="@mipmap/history"
+        android:title="@string/pref_history_title"
+        android:fragment="jp.ogiwara.java.aileen.SettingsActivity$HistoryFragment"
+        />
 
 </preference-headers>
