@@ -31,6 +31,7 @@ import jp.ogiwara.java.aileen.MainActivity;
 import jp.ogiwara.java.aileen.R;
 import jp.ogiwara.java.aileen.model.YouTubeVideo;
 import jp.ogiwara.java.aileen.utils.Constants;
+import jp.ogiwara.java.aileen.utils.Networker;
 
 
 public class BackgroundAudioService extends Service {
@@ -191,7 +192,6 @@ public class BackgroundAudioService extends Service {
 
     private void playVideo(){
         isStarting = true;
-        MainActivity.getInstance().historyVideos.add(videoItem.id);
         extractUrlAndPlay();
     }
 
@@ -217,15 +217,16 @@ public class BackgroundAudioService extends Service {
 
     private void extractUrlAndPlay(){
         String link = Constants.YOUTUBE_BASE_URL + videoItem.id;
+        Log.d(TAG,"Start playing for:" + link);
         new YouTubeExtractor(this){
             @Override
             protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta){
                 if(ytFiles == null){
-                    Toast.makeText(getApplicationContext(), "ERROR",
+                    Toast.makeText(getApplicationContext(), "ERROR Play",
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                MainActivity.getInstance().historyVideos.add(videoItem.id);
                 YtFile ytFile = getQuality(ytFiles);
                 try{
                    if(mediaPlayer != null){
@@ -245,13 +246,13 @@ public class BackgroundAudioService extends Service {
     }
 
     private YtFile getQuality(SparseArray<YtFile> ytFiles){
-        if(isMobileInternet()){
+        if(Networker.isMobileInternet(getApplicationContext())){
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-            int val = pref.getInt("lte_quality_list",1);
+            int val = Integer.parseInt(pref.getString("lte_quality_list","1"));
 
             switch (val){
                 case 2:
-                    return getAsHigherQuality(ytFiles);
+                    return Networker.getAsHigherQuality(ytFiles);
                 case 1:
                     return ytFiles.get(251) != null ? ytFiles.get(251) : (ytFiles.get(141) != null ? ytFiles.get(141) : ytFiles.get(17));
                 case 0:
@@ -261,33 +262,11 @@ public class BackgroundAudioService extends Service {
                     return ytFiles.get(17);
             }
         }else{
-            return getAsHigherQuality(ytFiles);
+            return Networker.getAsHigherQuality(ytFiles);
         }
         /*ytFiles.get(141); //mp4a - stereo, 44.1 KHz 256 Kbps
         ytFiles.get(251); //webm - stereo, 48 KHz 160 Kbps
         ytFiles.get(140);  //mp4a - stereo, 44.1 KHz 128 Kbps
         ytFiles.get(17); //mp4 - stereo, 44.1 KHz 96-100 Kbps*/
-    }
-
-    private YtFile getAsHigherQuality(SparseArray<YtFile> ytFiles){
-        if(ytFiles.get(141) != null){
-            return ytFiles.get(141);
-        }else if(ytFiles.get(251) != null){
-            return  ytFiles.get(251);
-        }else if(ytFiles.get(140) != null){
-            return ytFiles.get(140);
-        }else{
-            return ytFiles.get(17);
-        }
-    }
-
-    private boolean isMobileInternet(){
-        ConnectivityManager connMgr = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo == null){
-            return true;
-        }
-        return (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE || networkInfo.getType() == ConnectivityManager.TYPE_MOBILE_DUN) ? true : false;
     }
 }

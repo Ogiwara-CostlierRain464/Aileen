@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Aileen</string>
 
+    <string name="author">Name: ogiwara</string>
+    <string name="email">Email: ogiwara.dev@gmail.com</string>
+    <string name="github_link">Github: https://github.com/Ogiwara-CostlierRain464/Aileen</string>
+    <string name="date">March 2017.</string>
+
     <!-- Navigation -->
     <string name="label_list">ラベルリスト</string>
     <string name="history">履歴</string>
@@ -49,6 +54,19 @@
     </string-array>
 
     <string-array name="pref_data_lte_quality_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string name="pref_data_thumbnail_quality_message">動画のサムネイルの品質</string>
+    <string-array name="pref_data_thumbnail_quality_titles">
+        <item>表示しない</item>
+        <item>低画質</item>
+        <item>高画質</item>
+    </string-array>
+
+    <string-array name="pref_data_thumbnail_quality_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>

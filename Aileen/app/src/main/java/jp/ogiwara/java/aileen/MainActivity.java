@@ -3,6 +3,7 @@ package jp.ogiwara.java.aileen;
 import android.Manifest;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
@@ -47,7 +49,6 @@ import jp.ogiwara.java.aileen.utils.NetworkSingleton;
 
 /** 各関数内で次の処理を呼ぶ
  *
- * TODO インスタンスの復帰
  *
  * 1: View読み込み
  * 2: 権限チェック{@link MainActivity#loadPermission()}
@@ -58,6 +59,7 @@ import jp.ogiwara.java.aileen.utils.NetworkSingleton;
  */
 public class MainActivity extends AppCompatActivity {
 
+    public  static final int REQUEST_GOOGLE_PLAY_SERVICES = 0;
     private static final int REQUEST_CODE_CONTACT_PERMISSION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 2;
     private static final int REQUEST_AUTHORIZATION = 3;
@@ -105,6 +107,22 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.toolbar_about:
+                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                alertDialog.setTitle(getString(R.string.app_name));
+                alertDialog.setIcon(R.mipmap.icon);
+                alertDialog.setMessage(getString(R.string.author) + " "
+                + BuildConfig.VERSION_NAME + "\n\n" +
+                getString(R.string.email) + "\n\n" +
+                getString(R.string.github_link) +  "\n\n" +
+                getString(R.string.date) + "\n");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "ok",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
 
                 return true;
             case R.id.toolbar_settings:
@@ -148,16 +166,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+                Log.d("TAG","Navigation:" + item.getTitle().toString() + "has selected");
+
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-                if(item.getTitle().toString() == getResources().getString(R.string.label_list)){
+                if(item.getTitle().toString().equals(getResources().getString(R.string.label_list))){
+                    Log.d(TAG,"Labeled list is:" + labeledVideos.toString());
                     transaction.replace(R.id.BaseLayout, OfflineListFragment.create(MainActivity.this,OfflineListFragment.TYPE.label)).commit();
-                }else if(item.getTitle().toString() == getResources().getString(R.string.favorite)) {
+                }else if(item.getTitle().toString().equals(getResources().getString(R.string.favorite))) {
                     transaction.replace(R.id.BaseLayout, PlayListFragment.create(MainActivity.this, playLists.get("Favorites"))).commit();
-                }else if(item.getTitle().toString() == getResources().getString(R.string.history)) {
+                }else if(item.getTitle().toString().equals(getResources().getString(R.string.history))) {
+                    Log.d(TAG,"Labeled list is:" + historyVideos.toString());
                     transaction.replace(R.id.BaseLayout, OfflineListFragment.create(MainActivity.this,OfflineListFragment.TYPE.history)).commit();
-                }else if(item.getTitle().toString() == getResources().getString(R.string.download)){
-                    //TODO Downloads
                 }else{
                     transaction.replace(R.id.BaseLayout,PlayListFragment.create(MainActivity.this,playLists.get(item.getTitle().toString()))).commit();
                 }
@@ -186,6 +206,12 @@ public class MainActivity extends AppCompatActivity {
     private void loadPermission(){
         Log.d(TAG,"Loading Permission...");
         if(PermissionChecker.checkSelfPermission(getApplicationContext(), Manifest.permission.GET_ACCOUNTS)
+                != PackageManager.PERMISSION_GRANTED
+
+          || PermissionChecker.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED
+
+          || PermissionChecker.checkSelfPermission(getApplicationContext(),Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermission();
         }else{
@@ -194,26 +220,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestPermission(){
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.GET_ACCOUNTS)){
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.permission_dialog_title)
-                    .setMessage(R.string.permission_dialog_message)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.GET_ACCOUNTS},REQUEST_CODE_CONTACT_PERMISSION);
-                        }
-                    }).create().show();
-        }else{
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.GET_ACCOUNTS},REQUEST_CODE_CONTACT_PERMISSION);
-        }
+        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.GET_ACCOUNTS,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CODE_CONTACT_PERMISSION);
+
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if(requestCode == REQUEST_CODE_CONTACT_PERMISSION){//拒否された場合
-            if(grantResults.length != 1 ||
-                    grantResults[0] != PackageManager.PERMISSION_GRANTED){
+            if(grantResults.length != 3 ||
+                    grantResults[0] != PackageManager.PERMISSION_GRANTED
+                    || grantResults[1] != PackageManager.PERMISSION_GRANTED
+                    || grantResults[2] != PackageManager.PERMISSION_GRANTED
+                    ){
                 new AlertDialog.Builder(this).setTitle(R.string.permission_denied_title).setMessage(R.string.permission_denied_message).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -296,6 +314,22 @@ public class MainActivity extends AppCompatActivity {
                 //再度loadAccountInfo
                 loadAccountInfo();
                 break;
+            case REQUEST_GOOGLE_PLAY_SERVICES:
+                if(resultCode == Activity.RESULT_OK){
+                    if(credential.getSelectedAccountName() == null)
+                        chooseAccount();
+                }else{
+                    final int connectionStatusCode = GooglePlayServicesUtil
+                            .isGooglePlayServicesAvailable(getApplicationContext());
+                    if(GooglePlayServicesUtil.isUserRecoverableError(connectionStatusCode)){
+                        Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
+                                connectionStatusCode, MainActivity.this,
+                                REQUEST_GOOGLE_PLAY_SERVICES);
+                        dialog.show();
+                    }else{
+                        Log.w(TAG,"UnRecoverable..");
+                    }
+                }
             default:
                 Log.w(TAG,"Un catch activity result!");
                 break;
@@ -349,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Log.e(TAG,connectionResult.getErrorMessage());
+                        Log.e(TAG,"FAILED!");
                     }
                 }).addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)

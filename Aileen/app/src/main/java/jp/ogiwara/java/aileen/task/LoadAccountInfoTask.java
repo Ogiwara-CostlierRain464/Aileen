@@ -1,10 +1,14 @@
 package jp.ogiwara.java.aileen.task;
 
+import android.app.Dialog;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.Menu;
 
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -46,13 +50,16 @@ public class LoadAccountInfoTask extends AsyncTask<Void,Void,Void>{
     @Override
     protected Void doInBackground(Void... voids){
         YouTube youTube;
-        try{
-            youTube = new YouTube.Builder(transport,jsonFactory,credential).setApplicationName(
+        try {
+            youTube = new YouTube.Builder(transport, jsonFactory, credential).setApplicationName(
                     activity.getResources().getResourceName(R.string.app_name)
             ).build();
 
             //getChannelRatedList(youTube);
             getOtherList(youTube);
+        }catch(final GooglePlayServicesAvailabilityIOException availabilityException){
+            showGooglePlayServicesAvailabilityErrorDialog(availabilityException.getConnectionStatusCode());
+            cancel(true);
         }catch (UserRecoverableAuthIOException e){
             e.printStackTrace();
         }catch (IOException e){
@@ -87,6 +94,19 @@ public class LoadAccountInfoTask extends AsyncTask<Void,Void,Void>{
         activity.playLists.add("Likes",relatedPlaylists.getLikes());
     }
 
+    private void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode){
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Dialog dialog = GooglePlayServicesUtil.getErrorDialog(
+                        connectionStatusCode,activity,
+                        MainActivity.REQUEST_GOOGLE_PLAY_SERVICES
+                );
+                dialog.show();
+            }
+        });
+    }
+
     @Override
     protected void onPostExecute(Void v){
 
@@ -97,5 +117,10 @@ public class LoadAccountInfoTask extends AsyncTask<Void,Void,Void>{
 
         System.out.println(activity.playLists);
         activity.loadFirstFragment();
+    }
+
+    @Override
+    protected void onCancelled(){
+        Log.d(TAG,"Canceled");
     }
 }

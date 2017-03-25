@@ -19,11 +19,5 @@
         android:id="@+id/history"
         android:icon="@mipmap/history"
         android:title="@string/history" />
-
-    <item
-        android:id="@+id/downloads"
-        android:icon="@mipmap/download"
-        android:title="@string/download"
-        />
     </group>
 </menu>

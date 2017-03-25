@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jp.ogiwara.java.aileen.MainActivity;
 import jp.ogiwara.java.aileen.R;
 import jp.ogiwara.java.aileen.task.LoadVideosTask;
@@ -55,6 +58,13 @@ public class OfflineListFragment extends Fragment {
     }
 
     private void loadVideos(){
-        new LoadVideosTask(mainActivity).execute(type == TYPE.label ? mainActivity.labeledVideos : mainActivity.historyVideos);
+
+        ArrayList<String> data = type == TYPE.label ? mainActivity.labeledVideos : mainActivity.historyVideos;
+
+        if(data.size() == 0) {
+            return;
+        }else {
+            new LoadVideosTask(mainActivity).execute(data);
+        }
     }
 }

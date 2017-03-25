@@ -54,6 +54,10 @@ public class PlayListFragment extends Fragment {
     }
 
     private void loadVideos(){
-        new LoadPlayListVideosTask(mainActivity).execute(playListId);
+        if(playListId == null){
+            return;
+        }else {
+            new LoadPlayListVideosTask(mainActivity).execute(playListId);
+        }
     }
 }
