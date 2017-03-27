@@ -13,10 +13,11 @@
 
     </jp.ogiwara.java.aileen.utils.CircleImageView>
 
-    <com.android.volley.toolbox.NetworkImageView
+    <ImageView
         android:id="@+id/drawer_header_account_cover"
+        android:src="@drawable/materialmini"
         android:layout_width="300dp"
-        android:layout_height="168dp" />
+        android:layout_height="169dp" />
 
     <TextView
         android:id="@+id/drawer_header_account_name"

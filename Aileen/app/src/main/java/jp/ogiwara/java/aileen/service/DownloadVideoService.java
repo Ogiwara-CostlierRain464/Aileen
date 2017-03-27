@@ -20,9 +20,6 @@ import jp.ogiwara.java.aileen.model.YouTubeVideo;
 import jp.ogiwara.java.aileen.utils.Constants;
 import jp.ogiwara.java.aileen.utils.Networker;
 
-/**
- * Created by ogiwara on 2017/03/22.
- */
 
 public class DownloadVideoService extends Service {
 

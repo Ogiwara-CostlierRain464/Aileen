@@ -1,0 +1,82 @@
+<resources>
+    <string name="app_name">Aileen</string>
+
+    <string name="author">Name: ogiwara</string>
+    <string name="email">Email: ogiwara.dev@gmail.com</string>
+    <string name="github_link">Github: https://github.com/Ogiwara-CostlierRain464/Aileen</string>
+    <string name="date">March 2017.</string>
+
+    <!-- Navigation -->
+    <string name="label_list">LabelList</string>
+    <string name="history">History</string>
+    <string name="favorite">Favorites</string>
+    <string name="thumb_up">Thumb up</string>
+    <string name="playlist">PlayList</string>
+    <string name="download">Download</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
+
+    <!-- Permission Dialog-->
+    <string name="permission_dialog_title">Requesting for Permission</string>
+    <string name="permission_dialog_message">To use this app, you must accept the following dialog.</string>
+
+    <!-- Permission Denied Dialog-->
+    <string name="permission_denied_title">Permission denied</string>
+    <string name="permission_denied_message">Closing this app</string>
+
+    <!-- Account not choosed  -->
+    <string name="account_not_choose_title">Please choose account</string>
+    <string name="account_not_choose_message">To access youtube account, choose your account.</string>
+
+    <!-- Google plus failed -->
+    <string name="google_plus_failed_title">Failed to connect google plus</string>
+
+    <!-- OAuth failer Dialog -->
+    <string name="oauth_failed_title">Authorization failed</string>
+
+    <!-- -->
+    <string name="layout_no_item_message">Nothing at here</string>
+
+    <!-- more menu -->
+    <string name="more_download">download</string>
+    <string name="more_share">share</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Settings Activity -->
+
+    <string name="pref_data_title">Data Usage</string>
+
+    <string name="pref_data_lte_quality_message">Video quality in mobile network</string>
+    <string-array name="pref_data_lte_quality_titles">
+        <item>360p</item>
+        <item>480p</item>
+        <item>1080p(Highest)</item>
+    </string-array>
+
+    <string-array name="pref_data_lte_quality_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string name="pref_data_thumbnail_quality_message">Video thumbnail quality</string>
+    <string-array name="pref_data_thumbnail_quality_titles">
+        <item>none</item>
+        <item>low</item>
+        <item>high</item>
+    </string-array>
+
+    <string-array name="pref_data_thumbnail_quality_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string name="pref_history_title">history and privacy</string>
+
+    <string name="pref_history_clean_history_title">Clean history</string>
+    <string name="pref_history_clean_labeled_title">Clean label list</string>
+
+    <string name="pref_history_clean_history_dialog">History cleared</string>
+    <string name="pref_history_clean_labeled_dialog">Label list cleared</string>
+</resources>

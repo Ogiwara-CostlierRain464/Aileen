@@ -3,6 +3,7 @@ package jp.ogiwara.java.aileen.utils;
 import android.util.SparseArray;
 
 import com.google.android.gms.common.Scopes;
+import com.google.android.gms.plus.Plus;
 import com.google.api.services.youtube.YouTubeScopes;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 
 public final class Constants {
 
-    public static final String API_KEY = "AIzaSyBLW3Flnssn9fJEKTuyb2V1AlyqSMF4W-s";
+    public static final String API_KEY = "AIzaSyCOvs-H0ezgP1wS14KAIxB3kop1kembQSQ";
 
     public static final String[] ACCESS_SCOPES=
             {Scopes.PROFILE, YouTubeScopes.YOUTUBE};

@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -24,9 +25,14 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -62,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
     public  static final int REQUEST_GOOGLE_PLAY_SERVICES = 0;
     private static final int REQUEST_CODE_CONTACT_PERMISSION = 1;
     private static final int REQUEST_ACCOUNT_PICKER = 2;
-    private static final int REQUEST_AUTHORIZATION = 3;
+    public static final int REQUEST_AUTHORIZATION = 3;
+    private static final int RC_SIGN_IN = 9001;
     private static final String TAG = MainActivity.class.getName();
 
     private static MainActivity instance;
@@ -71,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     public DrawerLayout drawerLayout;
     public NavigationView navigationView;
     NetworkImageView accountImageView;
-    NetworkImageView accountImageCover;
+    ImageView accountImageCover;
     TextView accountNameTextView;
 
     SharedPreferences preferences;
@@ -108,10 +115,9 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.toolbar_about:
                 AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-                alertDialog.setTitle(getString(R.string.app_name));
+                alertDialog.setTitle(getString(R.string.app_name) + BuildConfig.VERSION_NAME );
                 alertDialog.setIcon(R.mipmap.icon);
-                alertDialog.setMessage(getString(R.string.author) + " "
-                + BuildConfig.VERSION_NAME + "\n\n" +
+                alertDialog.setMessage(getString(R.string.author) + "\n\n" +
                 getString(R.string.email) + "\n\n" +
                 getString(R.string.github_link) +  "\n\n" +
                 getString(R.string.date) + "\n");
@@ -158,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                                        int oldLeft, int oldTop, int oldRight, int oldBottom){
                 accountImageView = (NetworkImageView) navigationView.findViewById(R.id.drawer_header_account_image);
                 accountNameTextView = (TextView) navigationView.findViewById(R.id.drawer_header_account_name);
-                accountImageCover = (NetworkImageView) navigationView.findViewById(R.id.drawer_header_account_cover);
+                accountImageCover = (ImageView) navigationView.findViewById(R.id.drawer_header_account_cover);
             }
         });
 
@@ -292,11 +298,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void chooseAccount(){
+        Log.d(TAG,"chooseAccount Activity?");
         startActivityForResult(credential.newChooseAccountIntent(),REQUEST_ACCOUNT_PICKER);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG,"onActivity");
         super.onActivityResult(requestCode,resultCode,data);
         switch (requestCode){
             case REQUEST_ACCOUNT_PICKER:
@@ -312,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case REQUEST_AUTHORIZATION:
                 //再度loadAccountInfo
-                loadAccountInfo();
+                    loadAccount();
                 break;
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if(resultCode == Activity.RESULT_OK){
@@ -330,6 +338,20 @@ public class MainActivity extends AppCompatActivity {
                         Log.w(TAG,"UnRecoverable..");
                     }
                 }
+                break;
+            case RC_SIGN_IN:
+                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                Log.d(TAG,"ActivityResult#RC SIGN IN :" + result.isSuccess());
+                if(result.isSuccess()){
+                    GoogleSignInAccount account = result.getSignInAccount();
+                    accountImageView.setImageUrl(account.getPhotoUrl().toString(),NetworkSingleton.getInstance(getApplicationContext()).getImageLoader());
+                    //accountImageCover.setImageDrawable(getDrawable(R.drawable.materialmini));
+                    //accountImageCover.setDefaultImageResId(R.drawable.materialmini);
+                    accountNameTextView.setText(account.getDisplayName());
+                }else{
+                    Log.w(TAG,"Google + FAILED! at activity result");
+                }
+                break;
             default:
                 Log.w(TAG,"Un catch activity result!");
                 break;
@@ -339,13 +361,64 @@ public class MainActivity extends AppCompatActivity {
 
     //region load account info
     private void loadAccountInfo(){
-        Log.d(TAG,"Loading Account Info...");
+        Log.d(TAG,"loadAccountInfo");
         setProfileInfo();
         new LoadAccountInfoTask(this,credential).execute();
     }
 
     private void setProfileInfo(){
-        googleApiClient = new GoogleApiClient.Builder(getApplicationContext())
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .setAccountName(accountName)
+                .build();
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        Log.e(TAG,"Google+ onConnectionFailed");
+                    }
+                })
+                .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
+                //.addApi(Auth.GOOGLE_SIGN_IN_API,gso)
+                /*.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(@Nullable Bundle bundle) {
+                        if(!googleApiClient.isConnected() || Plus.PeopleApi.getCurrentPerson(googleApiClient) == null){
+                            accountImageView.setImageDrawable(null);
+                            accountImageCover.setImageDrawable(null);
+                            accountNameTextView.setText(accountName);
+                        }else{
+                            Log.d(TAG,"Profile");
+                            Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
+                            if(currentPerson.hasImage()){
+                                accountImageView.setImageUrl(currentPerson.getImage().getUrl(), NetworkSingleton.getInstance(getApplicationContext()).getImageLoader());
+                            }else{
+                                accountImageView.setImageDrawable(getDrawable(R.mipmap.icon));
+                            }
+                            if(currentPerson.hasDisplayName()){
+                                accountNameTextView.setText(currentPerson.getDisplayName());
+                            }else{
+                                accountNameTextView.setText(accountName);
+                            }
+                            if(currentPerson.hasCover()){
+                                accountImageCover.setImageUrl(currentPerson.getCover().getCoverPhoto().getUrl(),NetworkSingleton.getInstance(getApplicationContext()).getImageLoader());
+                            }else{
+                                accountImageCover.setImageDrawable(getDrawable(R.drawable.material));
+                            }
+                        }
+                        googleApiClient.disconnect();
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int i) {
+                        Log.w(TAG,"onConnectionSuspended!");
+                    }
+                })*/
+                .build();
+
+        //region old
+        /*googleApiClient = new GoogleApiClient.Builder(getApplicationContext())
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(@Nullable Bundle bundle) {
@@ -383,12 +456,16 @@ public class MainActivity extends AppCompatActivity {
                 .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Log.e(TAG,"FAILED!");
+                        Log.e(TAG,"Google+ onConnectionFailed");
                     }
                 }).addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
-                .setAccountName(accountName).build();
-        googleApiClient.connect();
+                .setAccountName(accountName).build();*/
+        //endregion
+        //googleApiClient.connect();
+        Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        Log.d(TAG,"Auth.GoogleSignInApi Activity?");
+        startActivityForResult(intent,RC_SIGN_IN);
     }
     //endregion
 

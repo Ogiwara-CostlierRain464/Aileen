@@ -61,7 +61,8 @@ public class LoadAccountInfoTask extends AsyncTask<Void,Void,Void>{
             showGooglePlayServicesAvailabilityErrorDialog(availabilityException.getConnectionStatusCode());
             cancel(true);
         }catch (UserRecoverableAuthIOException e){
-            e.printStackTrace();
+            showAccountAccessDialog(e);
+            cancel(true);
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -103,6 +104,15 @@ public class LoadAccountInfoTask extends AsyncTask<Void,Void,Void>{
                         MainActivity.REQUEST_GOOGLE_PLAY_SERVICES
                 );
                 dialog.show();
+            }
+        });
+    }
+
+    private void showAccountAccessDialog(final UserRecoverableAuthIOException e){
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity.startActivityForResult(e.getIntent(),MainActivity.REQUEST_AUTHORIZATION);
             }
         });
     }

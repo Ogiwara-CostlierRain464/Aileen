@@ -46,7 +46,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         Intent intent = getIntent();
 
         Toolbar toolbar = new Toolbar(getApplicationContext());
-        toolbar.setTitle("設定");
+        toolbar.setTitle(getString(R.string.settings));
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         toolbar.setMinimumHeight(150);
         toolbar.setBackgroundColor(getResources().getColor(R.color.pink));
