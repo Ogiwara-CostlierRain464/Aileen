@@ -47,8 +47,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         Toolbar toolbar = new Toolbar(getApplicationContext());
         toolbar.setTitle(getString(R.string.settings));
+        toolbar.setElevation(6.0f);
+        toolbar.setTitleMargin(50,50,50,50);
+        toolbar.setMinimumHeight(200);
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        toolbar.setMinimumHeight(150);
         toolbar.setBackgroundColor(getResources().getColor(R.color.pink));
 
         LinearLayout root = (LinearLayout) findViewById(android.R.id.list).getParent().getParent().getParent();

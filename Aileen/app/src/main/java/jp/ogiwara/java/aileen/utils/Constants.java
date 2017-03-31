@@ -17,7 +17,7 @@ public final class Constants {
     public static final String API_KEY = "AIzaSyCOvs-H0ezgP1wS14KAIxB3kop1kembQSQ";
 
     public static final String[] ACCESS_SCOPES=
-            {Scopes.PROFILE, YouTubeScopes.YOUTUBE};
+            {YouTubeScopes.YOUTUBE};
 
     public static final String YOUTUBE_BASE_URL = "http://youtube.com/watch?v=";
 

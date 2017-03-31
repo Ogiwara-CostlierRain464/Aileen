@@ -286,7 +286,6 @@ public class MainActivity extends AppCompatActivity {
 
     //region choose account
     private void loadAccount(){
-        Log.d(TAG,"Loading Account...");
         credential = GoogleAccountCredential.usingOAuth2(getApplicationContext(), Arrays.asList(Constants.ACCESS_SCOPES));
         credential.setBackOff(new ExponentialBackOff());
         if(accountName == null){
@@ -368,6 +367,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void setProfileInfo(){
 
+        if(googleApiClient != null)
+            return;
+
+        Log.d(TAG,"setProfileInfo");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .setAccountName(accountName)
@@ -380,89 +383,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .addApi(Auth.GOOGLE_SIGN_IN_API,gso)
-                //.addApi(Auth.GOOGLE_SIGN_IN_API,gso)
-                /*.addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(@Nullable Bundle bundle) {
-                        if(!googleApiClient.isConnected() || Plus.PeopleApi.getCurrentPerson(googleApiClient) == null){
-                            accountImageView.setImageDrawable(null);
-                            accountImageCover.setImageDrawable(null);
-                            accountNameTextView.setText(accountName);
-                        }else{
-                            Log.d(TAG,"Profile");
-                            Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
-                            if(currentPerson.hasImage()){
-                                accountImageView.setImageUrl(currentPerson.getImage().getUrl(), NetworkSingleton.getInstance(getApplicationContext()).getImageLoader());
-                            }else{
-                                accountImageView.setImageDrawable(getDrawable(R.mipmap.icon));
-                            }
-                            if(currentPerson.hasDisplayName()){
-                                accountNameTextView.setText(currentPerson.getDisplayName());
-                            }else{
-                                accountNameTextView.setText(accountName);
-                            }
-                            if(currentPerson.hasCover()){
-                                accountImageCover.setImageUrl(currentPerson.getCover().getCoverPhoto().getUrl(),NetworkSingleton.getInstance(getApplicationContext()).getImageLoader());
-                            }else{
-                                accountImageCover.setImageDrawable(getDrawable(R.drawable.material));
-                            }
-                        }
-                        googleApiClient.disconnect();
-                    }
-
-                    @Override
-                    public void onConnectionSuspended(int i) {
-                        Log.w(TAG,"onConnectionSuspended!");
-                    }
-                })*/
                 .build();
-
-        //region old
-        /*googleApiClient = new GoogleApiClient.Builder(getApplicationContext())
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(@Nullable Bundle bundle) {
-                        if(!googleApiClient.isConnected() || Plus.PeopleApi.getCurrentPerson(googleApiClient) == null){
-                            accountImageView.setImageDrawable(null);
-                            accountImageCover.setImageDrawable(null);
-                            accountNameTextView.setText(accountName);
-                        }else{
-                            Log.d(TAG,"Profile");
-                            Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
-                            if(currentPerson.hasImage()){
-                                accountImageView.setImageUrl(currentPerson.getImage().getUrl(), NetworkSingleton.getInstance(getApplicationContext()).getImageLoader());
-                            }else{
-                                accountImageView.setImageDrawable(getDrawable(R.mipmap.icon));
-                            }
-                            if(currentPerson.hasDisplayName()){
-                                accountNameTextView.setText(currentPerson.getDisplayName());
-                            }else{
-                                accountNameTextView.setText(accountName);
-                            }
-                            if(currentPerson.hasCover()){
-                                accountImageCover.setImageUrl(currentPerson.getCover().getCoverPhoto().getUrl(),NetworkSingleton.getInstance(getApplicationContext()).getImageLoader());
-                            }else{
-                                accountImageCover.setImageDrawable(getDrawable(R.drawable.material));
-                            }
-                        }
-                        googleApiClient.disconnect();
-                    }
-
-                    @Override
-                    public void onConnectionSuspended(int i) {
-                        Log.w(TAG,"onConnectionSuspended!");
-                    }
-                })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Log.e(TAG,"Google+ onConnectionFailed");
-                    }
-                }).addApi(Plus.API)
-                .addScope(Plus.SCOPE_PLUS_PROFILE)
-                .setAccountName(accountName).build();*/
-        //endregion
-        //googleApiClient.connect();
         Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         Log.d(TAG,"Auth.GoogleSignInApi Activity?");
         startActivityForResult(intent,RC_SIGN_IN);
