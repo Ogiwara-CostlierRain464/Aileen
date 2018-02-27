@@ -3,9 +3,14 @@ package jp.ogiwara.java.aileen;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.SparseArray;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import at.huber.youtubeExtractor.VideoMeta;
+import at.huber.youtubeExtractor.YouTubeExtractor;
+import at.huber.youtubeExtractor.YtFile;
 
 import static org.junit.Assert.*;
 
@@ -17,10 +22,16 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
     @Test
-    public void useAppContext() throws Exception {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
+    public void youtubeExtractorTest() throws Exception {
+        String link = "https://www.youtube.com/watch?v=zTmlrZw6Ctc";
 
-        assertEquals("jp.ogiwara.java.aileen", appContext.getPackageName());
+        Context context = InstrumentationRegistry.getTargetContext();
+
+        new YouTubeExtractor(context){
+            @Override
+            protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta) {
+                assertNotNull(ytFiles);
+            }
+        }.extract(link, true, true);
     }
 }
